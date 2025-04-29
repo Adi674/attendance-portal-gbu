@@ -1,338 +1,328 @@
 
-import React, { useState } from "react";
+import React from "react";
 import PageLayout from "@/components/PageLayout";
+import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { mockClasses, mockExtendedAttendance, mockStudents, mockTeachers } from "@/data/mockData";
-import { ResponsiveContainer, PieChart, Pie, Cell, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from "recharts";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+import { 
+  PieChart, 
+  Pie, 
+  Cell, 
+  ResponsiveContainer, 
+  Legend, 
+  Tooltip as RechartsTooltip, 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid,
+  LineChart,
+  Line
+} from "recharts";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { mockExtendedAttendance, mockStudents, mockTeachers, mockClasses } from "@/data/mockData";
 
 const AdminAnalytics = () => {
-  const [selectedDepartment, setSelectedDepartment] = useState("all");
-  const [selectedTimeframe, setSelectedTimeframe] = useState("monthly");
-
-  // Get all departments
-  const departments = [...new Set(mockClasses.map(cls => cls.department))];
+  const { user } = useAuth();
   
-  // Filter classes by department
-  const filteredClasses = selectedDepartment === "all"
-    ? mockClasses
-    : mockClasses.filter(cls => cls.department === selectedDepartment);
+  if (!user) return null;
   
-  const classIds = filteredClasses.map(cls => cls.id);
-  
-  // Filter attendance by selected classes
-  const filteredAttendance = mockExtendedAttendance.filter(a => classIds.includes(a.classId));
-  
-  // Attendance summary data
-  const attendanceSummary = [
-    { name: "Present", value: filteredAttendance.filter(a => a.status === "present").length, color: "#4ade80" },
-    { name: "Absent", value: filteredAttendance.filter(a => a.status === "absent").length, color: "#f87171" },
-    { name: "Late", value: filteredAttendance.filter(a => a.status === "late").length, color: "#facc15" },
+  // Overall attendance data
+  const attendanceData = [
+    { name: "Present", value: mockExtendedAttendance.filter(a => a.status === "present").length },
+    { name: "Absent", value: mockExtendedAttendance.filter(a => a.status === "absent").length },
+    { name: "Late", value: mockExtendedAttendance.filter(a => a.status === "late").length },
   ];
   
-  // Department wise attendance data
+  // Department-wise attendance data
+  const departments = ["Computer Science", "Information Technology", "Electronics", "Mechanical", "Civil"];
   const departmentAttendanceData = departments.map(department => {
-    const deptClasses = mockClasses.filter(cls => cls.department === department);
-    const deptClassIds = deptClasses.map(cls => cls.id);
-    
-    const deptAttendance = mockExtendedAttendance.filter(a => deptClassIds.includes(a.classId));
-    const totalAttendance = deptAttendance.length;
-    const presentAttendance = deptAttendance.filter(a => a.status === "present").length;
-    
+    // Simulate department-specific calculations
+    const randomPercentage = Math.floor(Math.random() * 30) + 70; // 70-100% random attendance
     return {
       name: department,
-      attendanceRate: totalAttendance > 0 ? Math.round((presentAttendance / totalAttendance) * 100) : 0,
+      attendanceRate: randomPercentage
+    };
+  });
+  
+  // Monthly attendance trend data
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const monthlyTrendData = months.map(month => {
+    // Simulate monthly trends
+    const randomPercentage = Math.floor(Math.random() * 20) + 75; // 75-95% random attendance
+    return {
+      name: month,
+      attendanceRate: randomPercentage
+    };
+  });
+  
+  // Semester-wise attendance data
+  const semesterAttendanceData = [
+    { name: "Semester 1", attendanceRate: 88 },
+    { name: "Semester 2", attendanceRate: 84 },
+    { name: "Semester 3", attendanceRate: 82 },
+    { name: "Semester 4", attendanceRate: 79 },
+    { name: "Semester 5", attendanceRate: 75 },
+    { name: "Semester 6", attendanceRate: 73 },
+    { name: "Semester 7", attendanceRate: 78 },
+    { name: "Semester 8", attendanceRate: 76 },
+  ];
+  
+  // Class-wise attendance data
+  const topClassesData = mockClasses.slice(0, 5).map(cls => {
+    // Simulate class-specific calculations
+    const randomPercentage = Math.floor(Math.random() * 25) + 70; // 70-95% random attendance
+    return {
+      name: cls.subject,
+      attendanceRate: randomPercentage
     };
   });
   
   // Teacher performance data
-  const teacherPerformanceData = mockTeachers.slice(0, 8).map(teacher => {
-    const teacherClasses = mockClasses.filter(cls => cls.teacherId === teacher.id);
-    const teacherClassIds = teacherClasses.map(cls => cls.id);
-    
-    const teacherAttendance = mockExtendedAttendance.filter(a => teacherClassIds.includes(a.classId));
-    const totalAttendance = teacherAttendance.length;
-    const presentAttendance = teacherAttendance.filter(a => a.status === "present").length;
-    
+  const teacherPerformanceData = mockTeachers.slice(0, 5).map(teacher => {
+    // Simulate teacher-specific calculations
+    const randomPercentage = Math.floor(Math.random() * 20) + 75; // 75-95% random attendance
     return {
       name: teacher.name,
-      attendanceRate: totalAttendance > 0 ? Math.round((presentAttendance / totalAttendance) * 100) : 0,
-    };
-  }).sort((a, b) => b.attendanceRate - a.attendanceRate);
-  
-  // Semester wise attendance data
-  const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
-  const semesterAttendanceData = semesters.map(semester => {
-    const semClasses = filteredClasses.filter(cls => cls.semester === semester);
-    const semClassIds = semClasses.map(cls => cls.id);
-    
-    const semAttendance = mockExtendedAttendance.filter(a => semClassIds.includes(a.classId));
-    const totalAttendance = semAttendance.length;
-    const presentAttendance = semAttendance.filter(a => a.status === "present").length;
-    
-    return {
-      name: `Sem ${semester}`,
-      attendanceRate: totalAttendance > 0 ? Math.round((presentAttendance / totalAttendance) * 100) : 0,
+      attendanceRate: randomPercentage
     };
   });
-  
-  // Monthly trend data (mock data for demonstration)
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const monthlyTrendData = months.map(month => {
-    return {
-      name: month,
-      present: Math.floor(Math.random() * 30) + 20,
-      absent: Math.floor(Math.random() * 15),
-      late: Math.floor(Math.random() * 10),
-    };
-  });
-  
-  // Weekly data
-  const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const weeklyData = weekDays.map(day => {
-    return {
-      name: day,
-      attendance: Math.floor(Math.random() * 40) + 60,
-    };
-  });
-  
-  // Calculate total stats
-  const totalStudents = mockStudents.length;
-  const totalTeachers = mockTeachers.length;
-  const totalClasses = mockClasses.length;
-  const averageAttendanceRate = attendanceSummary[0].value + attendanceSummary[1].value + attendanceSummary[2].value > 0
-    ? Math.round((attendanceSummary[0].value / (attendanceSummary[0].value + attendanceSummary[1].value + attendanceSummary[2].value)) * 100)
-    : 0;
   
   const COLORS = ['#4ade80', '#f87171', '#facc15'];
   
-  const chartConfig = {
-    present: { label: "Present", theme: { light: "#4ade80", dark: "#4ade80" } },
-    absent: { label: "Absent", theme: { light: "#f87171", dark: "#f87171" } },
-    late: { label: "Late", theme: { light: "#facc15", dark: "#facc15" } },
-  };
-
   return (
-    <PageLayout title="University Attendance Analytics">
+    <PageLayout title="Analytics Dashboard">
       <div className="grid gap-6">
-        <div className="flex flex-col md:flex-row gap-4 md:justify-between">
-          <div className="flex gap-4">
-            <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Select Department" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Departments</SelectItem>
-                {departments.map(dept => (
-                  <SelectItem key={dept} value={dept}>{dept}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Attendance Analytics</h1>
+          <div className="flex gap-2">
+            <Button variant="outline">Export Report</Button>
+            <Button variant="outline">Print Dashboard</Button>
           </div>
         </div>
-
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">Total Students</CardTitle>
-              <CardDescription>University-wide</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{totalStudents}</div>
+              <div className="text-2xl font-bold">{mockStudents.length}</div>
+              <p className="text-xs text-muted-foreground">Across all departments</p>
             </CardContent>
           </Card>
           
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">Total Faculty</CardTitle>
-              <CardDescription>University-wide</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{totalTeachers}</div>
+              <div className="text-2xl font-bold">{mockTeachers.length}</div>
+              <p className="text-xs text-muted-foreground">Across all departments</p>
             </CardContent>
           </Card>
           
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">Total Classes</CardTitle>
-              <CardDescription>All scheduled classes</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{totalClasses}</div>
+              <div className="text-2xl font-bold">{mockClasses.length}</div>
+              <p className="text-xs text-muted-foreground">Active classes</p>
             </CardContent>
           </Card>
           
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Avg. Attendance</CardTitle>
-              <CardDescription>University-wide</CardDescription>
+              <CardTitle className="text-sm font-medium">Average Attendance</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{averageAttendanceRate}%</div>
+              <div className="text-2xl font-bold">
+                {attendanceData[0].value + attendanceData[2].value > 0 
+                  ? Math.round(
+                      (attendanceData[0].value / 
+                      (attendanceData[0].value + attendanceData[1].value + attendanceData[2].value)) 
+                      * 100
+                    ) 
+                  : 0}%
+              </div>
+              <p className="text-xs text-muted-foreground">Institutional average</p>
             </CardContent>
           </Card>
         </div>
-
+        
         <div className="grid gap-6 md:grid-cols-2">
-          <Card>
-            <CardHeader className="pb-2">
+          <Card className="col-span-1">
+            <CardHeader>
               <CardTitle>Attendance Overview</CardTitle>
-              <CardDescription>University-wide attendance</CardDescription>
+              <CardDescription>Distribution of attendance across institution</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="h-60">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={attendanceSummary}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {attendanceSummary.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
+            <CardContent className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={attendanceData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {attendanceData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Legend />
+                  <RechartsTooltip />
+                </PieChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
+          
+          <Card className="col-span-1">
+            <CardHeader>
               <CardTitle>Department-wise Attendance</CardTitle>
               <CardDescription>Attendance rates by department</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="h-60">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={departmentAttendanceData}
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis domain={[0, 100]} />
-                    <Tooltip />
-                    <Bar dataKey="attendanceRate" fill="#9b87f5" name="Attendance %" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
+            <CardContent className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={departmentAttendanceData}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Legend />
+                  <RechartsTooltip />
+                  <Bar dataKey="attendanceRate" name="Attendance Rate (%)" fill="#9b87f5" />
+                </BarChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </div>
-
+        
         <Card>
           <CardHeader>
-            <CardTitle>Attendance Trend</CardTitle>
-            <CardDescription>Attendance pattern over time</CardDescription>
+            <CardTitle>Monthly Attendance Trend</CardTitle>
+            <CardDescription>Attendance trend over the academic year</CardDescription>
           </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="monthly">
-              <TabsList className="mb-2">
-                <TabsTrigger value="monthly" onClick={() => setSelectedTimeframe("monthly")}>Monthly</TabsTrigger>
-                <TabsTrigger value="weekly" onClick={() => setSelectedTimeframe("weekly")}>Weekly</TabsTrigger>
-              </TabsList>
-              <TabsContent value="monthly" className="h-80">
-                <ChartContainer config={chartConfig}>
-                  <BarChart
-                    data={monthlyTrendData}
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <ChartTooltip>
-                      <ChartTooltipContent />
-                    </ChartTooltip>
-                    <Bar dataKey="present" fill="var(--color-present)" name="Present" />
-                    <Bar dataKey="absent" fill="var(--color-absent)" name="Absent" />
-                    <Bar dataKey="late" fill="var(--color-late)" name="Late" />
-                  </BarChart>
-                </ChartContainer>
-              </TabsContent>
-              <TabsContent value="weekly" className="h-80">
-                <ChartContainer config={chartConfig}>
-                  <LineChart
-                    data={weeklyData}
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis domain={[0, 100]} />
-                    <ChartTooltip>
-                      <ChartTooltipContent />
-                    </ChartTooltip>
-                    <Line type="monotone" dataKey="attendance" stroke="#9b87f5" name="Attendance %" />
-                  </LineChart>
-                </ChartContainer>
-              </TabsContent>
-            </Tabs>
+          <CardContent className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={monthlyTrendData}
+                margin={{
+                  top: 5,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis domain={[60, 100]} />
+                <Legend />
+                <RechartsTooltip />
+                <Line
+                  type="monotone"
+                  dataKey="attendanceRate"
+                  name="Attendance Rate (%)"
+                  stroke="#8884d8"
+                  activeDot={{ r: 8 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
-
+        
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>Top Faculty Performance</CardTitle>
-              <CardDescription>Teachers with best class attendance</CardDescription>
+              <Tabs defaultValue="semester">
+                <div className="flex items-center justify-between">
+                  <CardTitle>Academic Analysis</CardTitle>
+                  <TabsList>
+                    <TabsTrigger value="semester">Semester</TabsTrigger>
+                    <TabsTrigger value="class">Classes</TabsTrigger>
+                  </TabsList>
+                </div>
+              </Tabs>
             </CardHeader>
-            <CardContent>
-              <div className="h-80">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Faculty Name</TableHead>
-                      <TableHead>Attendance Rate</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {teacherPerformanceData.slice(0, 5).map((teacher, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{teacher.name}</TableCell>
-                        <TableCell>{teacher.attendanceRate}%</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Semester-wise Attendance</CardTitle>
-              <CardDescription>Attendance rates by semester</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-80">
+            <CardContent className="h-80">
+              <TabsContent value="semester">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={semesterAttendanceData}
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                    margin={{
+                      top: 5,
+                      right: 30,
+                      left: 20,
+                      bottom: 5,
+                    }}
                   >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
-                    <YAxis domain={[0, 100]} />
-                    <Tooltip />
-                    <Bar dataKey="attendanceRate" fill="#9b87f5" name="Attendance %" />
+                    <YAxis domain={[50, 100]} />
+                    <Legend />
+                    <RechartsTooltip />
+                    <Bar dataKey="attendanceRate" name="Attendance Rate (%)" fill="#4ade80" />
                   </BarChart>
                 </ResponsiveContainer>
-              </div>
+              </TabsContent>
+              <TabsContent value="class">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={topClassesData}
+                    margin={{
+                      top: 5,
+                      right: 30,
+                      left: 20,
+                      bottom: 5,
+                    }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis domain={[50, 100]} />
+                    <Legend />
+                    <RechartsTooltip />
+                    <Bar dataKey="attendanceRate" name="Attendance Rate (%)" fill="#facc15" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </TabsContent>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Teacher Performance</CardTitle>
+              <CardDescription>Class attendance rates by teacher</CardDescription>
+            </CardHeader>
+            <CardContent className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={teacherPerformanceData}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis domain={[50, 100]} />
+                  <Legend />
+                  <RechartsTooltip />
+                  <Bar dataKey="attendanceRate" name="Attendance Rate (%)" fill="#9b87f5" />
+                </BarChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </div>

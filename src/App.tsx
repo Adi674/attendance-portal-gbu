@@ -16,6 +16,12 @@ import MarkAttendance from "@/pages/teacher/MarkAttendance";
 import StudentAnalytics from "@/pages/student/StudentAnalytics";
 import TeacherAnalytics from "@/pages/teacher/TeacherAnalytics";
 import AdminAnalytics from "@/pages/admin/AdminAnalytics";
+import StudentReports from "@/pages/student/StudentReports";
+import TeacherReports from "@/pages/teacher/TeacherReports";
+import AdminReports from "@/pages/admin/AdminReports";
+import StudentRequests from "@/pages/student/StudentRequests";
+import TeacherRequests from "@/pages/teacher/TeacherRequests";
+import AdminRequests from "@/pages/admin/AdminRequests";
 
 import NotFound from "./pages/NotFound";
 
@@ -74,6 +80,22 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
+            <Route 
+              path="/student/reports" 
+              element={
+                <ProtectedRoute allowedRoles={["student"]}>
+                  <StudentReports />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/student/requests" 
+              element={
+                <ProtectedRoute allowedRoles={["student"]}>
+                  <StudentRequests />
+                </ProtectedRoute>
+              } 
+            />
             
             {/* Teacher Routes */}
             <Route 
@@ -116,6 +138,22 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
+            <Route 
+              path="/teacher/reports" 
+              element={
+                <ProtectedRoute allowedRoles={["teacher"]}>
+                  <TeacherReports />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/teacher/requests" 
+              element={
+                <ProtectedRoute allowedRoles={["teacher"]}>
+                  <TeacherRequests />
+                </ProtectedRoute>
+              } 
+            />
             
             {/* Admin Routes */}
             <Route 
@@ -131,6 +169,22 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminAnalytics />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/reports" 
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminReports />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/requests" 
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminRequests />
                 </ProtectedRoute>
               } 
             />

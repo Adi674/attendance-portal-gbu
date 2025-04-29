@@ -12,6 +12,7 @@ import StudentDashboard from "@/pages/student/StudentDashboard";
 import TeacherDashboard from "@/pages/teacher/TeacherDashboard";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import QRGenerator from "@/pages/teacher/QRGenerator";
+import MarkAttendance from "@/pages/teacher/MarkAttendance";
 
 import NotFound from "./pages/NotFound";
 
@@ -77,6 +78,22 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["teacher"]}>
                   <QRGenerator />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/teacher/mark-attendance" 
+              element={
+                <ProtectedRoute allowedRoles={["teacher"]}>
+                  <MarkAttendance />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/teacher/mark-attendance/:classId" 
+              element={
+                <ProtectedRoute allowedRoles={["teacher"]}>
+                  <MarkAttendance />
                 </ProtectedRoute>
               } 
             />

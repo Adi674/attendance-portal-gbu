@@ -13,6 +13,9 @@ import TeacherDashboard from "@/pages/teacher/TeacherDashboard";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import QRGenerator from "@/pages/teacher/QRGenerator";
 import MarkAttendance from "@/pages/teacher/MarkAttendance";
+import StudentAnalytics from "@/pages/student/StudentAnalytics";
+import TeacherAnalytics from "@/pages/teacher/TeacherAnalytics";
+import AdminAnalytics from "@/pages/admin/AdminAnalytics";
 
 import NotFound from "./pages/NotFound";
 
@@ -63,6 +66,14 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
+            <Route 
+              path="/student/analytics" 
+              element={
+                <ProtectedRoute allowedRoles={["student"]}>
+                  <StudentAnalytics />
+                </ProtectedRoute>
+              } 
+            />
             
             {/* Teacher Routes */}
             <Route 
@@ -70,6 +81,14 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["teacher"]}>
                   <TeacherDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/teacher/analytics" 
+              element={
+                <ProtectedRoute allowedRoles={["teacher"]}>
+                  <TeacherAnalytics />
                 </ProtectedRoute>
               } 
             />
@@ -104,6 +123,14 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/analytics" 
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminAnalytics />
                 </ProtectedRoute>
               } 
             />

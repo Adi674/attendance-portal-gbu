@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import PageLayout from "@/components/PageLayout";
 import { useAuth } from "@/contexts/AuthContext";
@@ -23,10 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  Checkbox,
-  CheckboxItem
-} from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { 
   Bell,

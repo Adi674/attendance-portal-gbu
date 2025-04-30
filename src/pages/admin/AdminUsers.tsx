@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import PageLayout from "@/components/PageLayout";
 import { useAuth } from "@/contexts/AuthContext";
@@ -263,8 +262,8 @@ const AdminUsers = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full"
-              icon={<Search className="h-4 w-4" />}
             />
+            <Search className="h-4 w-4 text-muted-foreground absolute ml-3 pointer-events-none" />
           </div>
           <Button onClick={handleAddUser}>
             <UserPlus className="h-4 w-4 mr-2" />

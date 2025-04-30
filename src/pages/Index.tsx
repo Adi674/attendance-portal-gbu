@@ -93,9 +93,9 @@ const Index = () => {
         <p className="text-gray-600">Gautam Buddha University © {new Date().getFullYear()}</p>
         <div className="mt-2">
           <img
-            src="/lovable-uploads/f5642176-353c-49c3-bb3a-2636db255f20.png"
-            alt="GBU Campus"
-            className="w-full max-w-md h-auto rounded-lg opacity-80"
+            src="/lovable-uploads/80846679-e48c-4e99-a53c-96f63c05c550.png"
+            alt="GBU Campus at Night"
+            className="w-full max-w-4xl h-auto rounded-lg opacity-90 shadow-lg"
           />
         </div>
       </footer>

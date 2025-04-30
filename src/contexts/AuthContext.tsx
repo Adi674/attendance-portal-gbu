@@ -85,7 +85,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setUser(null);
     localStorage.removeItem("user");
     toast.info("You have been logged out");
-    navigate("/login");
+    navigate("/"); // Redirect to home page after logout
   };
 
   return (

@@ -245,57 +245,55 @@ const AdminAnalytics = () => {
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <Tabs defaultValue="semester">
-                <div className="flex items-center justify-between">
-                  <CardTitle>Academic Analysis</CardTitle>
-                  <TabsList>
-                    <TabsTrigger value="semester">Semester</TabsTrigger>
-                    <TabsTrigger value="class">Classes</TabsTrigger>
-                  </TabsList>
-                </div>
-              </Tabs>
+              <CardTitle>Academic Analysis</CardTitle>
             </CardHeader>
             <CardContent className="h-80">
-              <TabsContent value="semester">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={semesterAttendanceData}
-                    margin={{
-                      top: 5,
-                      right: 30,
-                      left: 20,
-                      bottom: 5,
-                    }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis domain={[50, 100]} />
-                    <Legend />
-                    <RechartsTooltip />
-                    <Bar dataKey="attendanceRate" name="Attendance Rate (%)" fill="#4ade80" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </TabsContent>
-              <TabsContent value="class">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={topClassesData}
-                    margin={{
-                      top: 5,
-                      right: 30,
-                      left: 20,
-                      bottom: 5,
-                    }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis domain={[50, 100]} />
-                    <Legend />
-                    <RechartsTooltip />
-                    <Bar dataKey="attendanceRate" name="Attendance Rate (%)" fill="#facc15" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </TabsContent>
+              <Tabs defaultValue="semester">
+                <TabsList className="mb-4">
+                  <TabsTrigger value="semester">Semester</TabsTrigger>
+                  <TabsTrigger value="class">Classes</TabsTrigger>
+                </TabsList>
+                <TabsContent value="semester">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={semesterAttendanceData}
+                      margin={{
+                        top: 5,
+                        right: 30,
+                        left: 20,
+                        bottom: 5,
+                      }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis domain={[50, 100]} />
+                      <Legend />
+                      <RechartsTooltip />
+                      <Bar dataKey="attendanceRate" name="Attendance Rate (%)" fill="#4ade80" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </TabsContent>
+                <TabsContent value="class">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={topClassesData}
+                      margin={{
+                        top: 5,
+                        right: 30,
+                        left: 20,
+                        bottom: 5,
+                      }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis domain={[50, 100]} />
+                      <Legend />
+                      <RechartsTooltip />
+                      <Bar dataKey="attendanceRate" name="Attendance Rate (%)" fill="#facc15" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
           

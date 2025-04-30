@@ -22,6 +22,10 @@ import AdminReports from "@/pages/admin/AdminReports";
 import StudentRequests from "@/pages/student/StudentRequests";
 import TeacherRequests from "@/pages/teacher/TeacherRequests";
 import AdminRequests from "@/pages/admin/AdminRequests";
+import AdminNotices from "@/pages/admin/AdminNotices";
+import AdminSchedule from "@/pages/admin/AdminSchedule";
+import AdminUsers from "@/pages/admin/AdminUsers";
+import AdminSettings from "@/pages/admin/AdminSettings";
 
 import NotFound from "./pages/NotFound";
 
@@ -185,6 +189,38 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminRequests />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/notices" 
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminNotices />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/users" 
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminUsers />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/schedule" 
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminSchedule />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/settings" 
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminSettings />
                 </ProtectedRoute>
               } 
             />

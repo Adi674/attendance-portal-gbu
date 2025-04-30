@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import PageLayout from "@/components/PageLayout";
 import { useAuth } from "@/contexts/AuthContext";
@@ -457,7 +456,5 @@ const AdminRequests = () => {
     </PageLayout>
   );
 };
-
-import { Badge } from "@/components/ui/badge";
 
 export default AdminRequests;

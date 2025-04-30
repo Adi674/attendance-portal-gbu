@@ -3,8 +3,8 @@ import React from "react";
 import PageLayout from "@/components/PageLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CalendarDays, Clock } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CalendarDays, Clock, MapPin, GraduationCap } from "lucide-react";
 
 // Mock data for student schedule
 const mockSchedule = [
@@ -14,19 +14,19 @@ const mockSchedule = [
     classes: [
       {
         id: "c1",
-        subject: "Introduction to Computer Science",
-        teacher: "Dr. Robert Smith",
+        subject: "Advanced Database Systems",
+        teacher: "Dr. Priya Gupta",
         room: "ICT-301",
         startTime: "09:00",
-        endTime: "10:30"
+        endTime: "10:30",
       },
       {
         id: "c2",
-        subject: "Calculus I",
-        teacher: "Dr. Jane Wilson",
+        subject: "Web Development",
+        teacher: "Dr. Rajesh Mishra",
         room: "ICT-201",
         startTime: "11:00",
-        endTime: "12:30"
+        endTime: "12:30",
       }
     ]
   },
@@ -36,19 +36,19 @@ const mockSchedule = [
     classes: [
       {
         id: "c3",
-        subject: "Physics",
-        teacher: "Dr. Emily Johnson",
+        subject: "Artificial Intelligence",
+        teacher: "Dr. Priya Gupta",
         room: "ICT-305",
         startTime: "09:00",
-        endTime: "10:30"
+        endTime: "10:30",
       },
       {
         id: "c4",
-        subject: "Digital Logic Design",
-        teacher: "Prof. David Clark",
-        room: "ICT-202",
+        subject: "Operating Systems",
+        teacher: "Dr. Rajesh Mishra",
+        room: "ICT-Lab 1",
         startTime: "13:00",
-        endTime: "14:30"
+        endTime: "15:00",
       }
     ]
   },
@@ -58,19 +58,19 @@ const mockSchedule = [
     classes: [
       {
         id: "c5",
-        subject: "Introduction to Computer Science",
-        teacher: "Dr. Robert Smith",
+        subject: "Advanced Database Systems",
+        teacher: "Dr. Priya Gupta",
         room: "ICT-301",
         startTime: "09:00",
-        endTime: "10:30"
+        endTime: "10:30",
       },
       {
         id: "c6",
-        subject: "Programming Lab",
-        teacher: "Dr. Lisa Zhang",
-        room: "ICT-Lab 2",
+        subject: "Software Engineering",
+        teacher: "Dr. Rajesh Mishra",
+        room: "ICT-202",
         startTime: "14:00",
-        endTime: "16:00"
+        endTime: "15:30",
       }
     ]
   },
@@ -80,19 +80,11 @@ const mockSchedule = [
     classes: [
       {
         id: "c7",
-        subject: "Physics Lab",
-        teacher: "Dr. Emily Johnson",
-        room: "Science Lab 3",
+        subject: "Artificial Intelligence",
+        teacher: "Dr. Priya Gupta",
+        room: "ICT-Lab 3",
         startTime: "10:00",
-        endTime: "12:00"
-      },
-      {
-        id: "c8",
-        subject: "English Communication",
-        teacher: "Prof. Sarah Adams",
-        room: "ICT-105",
-        startTime: "13:30",
-        endTime: "15:00"
+        endTime: "12:00",
       }
     ]
   },
@@ -101,20 +93,20 @@ const mockSchedule = [
     day: "Friday",
     classes: [
       {
-        id: "c9",
-        subject: "Calculus I",
-        teacher: "Dr. Jane Wilson",
-        room: "ICT-201",
+        id: "c8",
+        subject: "Software Engineering",
+        teacher: "Dr. Rajesh Mishra",
+        room: "ICT-202",
         startTime: "09:00",
-        endTime: "10:30"
+        endTime: "10:30",
       },
       {
-        id: "c10",
-        subject: "Digital Logic Design",
-        teacher: "Prof. David Clark",
-        room: "ICT-202",
-        startTime: "11:00",
-        endTime: "12:30"
+        id: "c9",
+        subject: "Web Development",
+        teacher: "Dr. Rajesh Mishra",
+        room: "ICT-Lab 1",
+        startTime: "13:00",
+        endTime: "15:00",
       }
     ]
   }
@@ -176,18 +168,25 @@ const StudentSchedule = () => {
                         {day.classes.map((classItem) => (
                           <div
                             key={classItem.id}
-                            className="mb-3 p-3 border rounded-lg bg-background flex flex-col gap-2"
+                            className="mb-3 p-4 border rounded-lg bg-background"
                           >
-                            <div className="flex justify-between items-center">
-                              <h4 className="font-medium">{classItem.subject}</h4>
-                              <div className="flex items-center text-sm text-muted-foreground">
-                                <Clock className="h-3 w-3 mr-1" />
-                                {classItem.startTime} - {classItem.endTime}
+                            <div className="flex justify-between items-start mb-2">
+                              <div>
+                                <h4 className="font-medium">{classItem.subject}</h4>
+                                <p className="text-sm text-muted-foreground">
+                                  {classItem.teacher}
+                                </p>
                               </div>
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              <p>{classItem.teacher}</p>
-                              <p>Room: {classItem.room}</p>
+                              <div className="flex flex-col items-end">
+                                <div className="flex items-center text-sm">
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  {classItem.startTime} - {classItem.endTime}
+                                </div>
+                                <div className="flex items-center text-sm text-muted-foreground mt-1">
+                                  <MapPin className="h-3 w-3 mr-1" />
+                                  {classItem.room}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -221,12 +220,14 @@ const StudentSchedule = () => {
                                         >
                                           <div>
                                             <span className="font-medium">{classItem.subject}</span>
-                                            <span className="text-sm text-muted-foreground ml-2">
-                                              ({classItem.room})
+                                            <span className="text-xs text-muted-foreground ml-2">
+                                              ({classItem.teacher})
                                             </span>
                                           </div>
-                                          <div className="text-xs text-muted-foreground">
-                                            {classItem.startTime} - {classItem.endTime}
+                                          <div className="text-xs">
+                                            <span className="text-muted-foreground">{classItem.room}</span>
+                                            <span className="mx-1">•</span>
+                                            <span>{classItem.startTime} - {classItem.endTime}</span>
                                           </div>
                                         </div>
                                       ))}

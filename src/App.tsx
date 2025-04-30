@@ -26,6 +26,8 @@ import AdminNotices from "@/pages/admin/AdminNotices";
 import AdminSchedule from "@/pages/admin/AdminSchedule";
 import AdminUsers from "@/pages/admin/AdminUsers";
 import AdminSettings from "@/pages/admin/AdminSettings";
+import StudentSchedule from "@/pages/student/StudentSchedule";
+import TeacherSchedule from "@/pages/teacher/TeacherSchedule";
 
 import NotFound from "./pages/NotFound";
 

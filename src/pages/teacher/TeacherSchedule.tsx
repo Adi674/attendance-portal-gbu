@@ -159,7 +159,7 @@ const monthlySchedule = [
 const TeacherSchedule = () => {
   const { user } = useAuth();
   
-  if (!user) return null;
+  if (!user) return <React.Fragment />;
 
   return (
     <PageLayout title="Class Schedule">

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -28,6 +29,7 @@ import AdminUsers from "@/pages/admin/AdminUsers";
 import AdminSettings from "@/pages/admin/AdminSettings";
 import StudentSchedule from "@/pages/student/StudentSchedule";
 import TeacherSchedule from "@/pages/teacher/TeacherSchedule";
+import StudentAttendance from "@/pages/student/StudentAttendance";
 
 import NotFound from "./pages/NotFound";
 
@@ -103,6 +105,22 @@ const App = () => (
                   </ProtectedRoute>
                 } 
               />
+              <Route 
+                path="/student/schedule" 
+                element={
+                  <ProtectedRoute allowedRoles={["student"]}>
+                    <StudentSchedule />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/student/attendance" 
+                element={
+                  <ProtectedRoute allowedRoles={["student"]}>
+                    <StudentAttendance />
+                  </ProtectedRoute>
+                } 
+              />
               
               {/* Teacher Routes */}
               <Route 
@@ -158,6 +176,14 @@ const App = () => (
                 element={
                   <ProtectedRoute allowedRoles={["teacher"]}>
                     <TeacherRequests />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/teacher/schedule" 
+                element={
+                  <ProtectedRoute allowedRoles={["teacher"]}>
+                    <TeacherSchedule />
                   </ProtectedRoute>
                 } 
               />

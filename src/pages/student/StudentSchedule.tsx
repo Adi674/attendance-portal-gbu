@@ -141,7 +141,7 @@ const monthlySchedule = [
 const StudentSchedule = () => {
   const { user } = useAuth();
   
-  // Return null if no user, but wrap the content in React.Fragment to ensure
+  // Return React.Fragment if no user, but wrap the content in React.Fragment to ensure
   // we're not breaking the React component tree
   if (!user) return <React.Fragment />;
 

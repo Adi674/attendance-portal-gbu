@@ -1,230 +1,262 @@
 
 import React from "react";
-import PageLayout from "@/components/PageLayout";
 import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { mockExtendedAttendance } from "@/data/mockData";
-import { FileText, Download, Printer } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import PageLayout from "@/components/PageLayout";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Download, FileText, Filter } from "lucide-react";
+import { mockExtendedAttendance, mockWeekClasses } from "@/data/mockData";
 
 const StudentReports = () => {
   const { user } = useAuth();
   
   if (!user) return null;
-
-  // Get student attendance data
-  const studentAttendance = mockExtendedAttendance.filter(a => a.studentId === user.id);
+  
+  // Filter attendance data for the current student
+  const studentAttendance = mockExtendedAttendance.filter(
+    (record) => record.studentId === "s1" // In a real app, this would use the actual user ID
+  );
   
   // Calculate attendance statistics
   const totalClasses = studentAttendance.length;
-  const presentCount = studentAttendance.filter(a => a.status === "present").length;
-  const absentCount = studentAttendance.filter(a => a.status === "absent").length;
-  const lateCount = studentAttendance.filter(a => a.status === "late").length;
+  const presentCount = studentAttendance.filter((record) => record.status === "present").length;
+  const absentCount = studentAttendance.filter((record) => record.status === "absent").length;
+  const lateCount = studentAttendance.filter((record) => record.status === "late").length;
   
   const attendancePercentage = totalClasses > 0 
     ? Math.round((presentCount / totalClasses) * 100) 
     : 0;
   
+  // Get list of unique subjects from the classes
+  const subjects = [...new Set(mockWeekClasses.map((cls) => cls.subject))];
+  
   return (
     <PageLayout title="Attendance Reports">
       <div className="grid gap-6">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold">My Attendance Reports</h1>
-            <p className="text-muted-foreground">View and download your attendance reports</p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-            <Select defaultValue="current">
-              <SelectTrigger className="w-full sm:w-[200px]">
-                <SelectValue placeholder="Select Period" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="current">Current Semester</SelectItem>
-                <SelectItem value="previous">Previous Semester</SelectItem>
-                <SelectItem value="year">Academic Year</SelectItem>
-              </SelectContent>
-            </Select>
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold">My Attendance Reports</h2>
+          <div className="flex gap-2">
             <Button variant="outline">
-              <Printer className="mr-2 h-4 w-4" />
-              Print
+              <Filter className="mr-2 h-4 w-4" />
+              Filter
             </Button>
             <Button>
               <Download className="mr-2 h-4 w-4" />
-              Export PDF
+              Download Full Report
             </Button>
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid gap-6 md:grid-cols-4">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">Total Classes</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalClasses}</div>
-              <p className="text-xs text-muted-foreground">Current semester</p>
             </CardContent>
           </Card>
-          
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">Present</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">{presentCount}</div>
-              <p className="text-xs text-muted-foreground">Classes attended</p>
+              <div className="text-2xl font-bold">{presentCount}</div>
             </CardContent>
           </Card>
-          
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">Absent</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">{absentCount}</div>
-              <p className="text-xs text-muted-foreground">Classes missed</p>
+              <div className="text-2xl font-bold">{absentCount}</div>
             </CardContent>
           </Card>
-          
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Attendance Rate</CardTitle>
+              <CardTitle className="text-sm font-medium">Attendance Percentage</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className={`text-2xl font-bold ${
-                attendancePercentage >= 75 
-                  ? "text-green-600" 
-                  : attendancePercentage >= 65 
-                    ? "text-yellow-600" 
-                    : "text-red-600"
-              }`}>
-                {attendancePercentage}%
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {attendancePercentage >= 75 
-                  ? "Good standing" 
-                  : attendancePercentage >= 65 
-                    ? "Warning: Attendance needs improvement" 
-                    : "Critical: Below minimum requirement"}
-              </p>
+              <div className="text-2xl font-bold">{attendancePercentage}%</div>
             </CardContent>
           </Card>
         </div>
         
         <Card>
           <CardHeader>
-            <Tabs defaultValue="subject">
-              <div className="flex items-center justify-between">
-                <CardTitle>Attendance Reports</CardTitle>
-                <TabsList>
-                  <TabsTrigger value="subject">By Subject</TabsTrigger>
-                  <TabsTrigger value="date">By Date</TabsTrigger>
-                </TabsList>
-              </div>
-              <CardDescription>Detailed attendance breakdown</CardDescription>
-            </Tabs>
+            <CardTitle>Subject-wise Attendance Report</CardTitle>
           </CardHeader>
           <CardContent>
-            <TabsContent value="subject" className="space-y-4">
-              <div className="rounded-md border">
-                <div className="grid grid-cols-5 bg-muted/50 p-4 font-medium">
-                  <div>Subject</div>
-                  <div>Total Classes</div>
-                  <div>Present</div>
-                  <div>Absent</div>
-                  <div>Percentage</div>
-                </div>
-                <div className="divide-y">
-                  {/* Mock subject data */}
-                  {["Data Structures", "Computer Networks", "Database Systems", "Operating Systems", "Web Development"].map(subject => {
-                    // Mock statistics for each subject
-                    const total = Math.floor(Math.random() * 10) + 20;
-                    const present = Math.floor(Math.random() * (total - 5)) + 5;
-                    const absent = total - present;
-                    const percentage = Math.round((present / total) * 100);
-                    
-                    return (
-                      <div key={subject} className="grid grid-cols-5 p-4 hover:bg-muted/50">
-                        <div className="font-medium">{subject}</div>
-                        <div>{total}</div>
-                        <div>{present}</div>
-                        <div>{absent}</div>
-                        <div className={`${
-                          percentage >= 75 
-                            ? "text-green-600" 
-                            : percentage >= 65 
-                              ? "text-yellow-600" 
-                              : "text-red-600"
-                        }`}>
-                          {percentage}%
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+            <Tabs defaultValue="all">
+              <TabsList className="mb-4">
+                <TabsTrigger value="all">All Subjects</TabsTrigger>
+                {subjects.map((subject) => (
+                  <TabsTrigger key={subject} value={subject}>
+                    {subject}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
               
-              <div className="flex justify-end">
-                <Button variant="outline" className="mr-2">
-                  <Printer className="mr-2 h-4 w-4" />
-                  Print Report
-                </Button>
-                <Button>
-                  <Download className="mr-2 h-4 w-4" />
-                  Download Report
-                </Button>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="date">
-              <div className="rounded-md border">
-                <div className="grid grid-cols-5 bg-muted/50 p-4 font-medium">
-                  <div>Date</div>
-                  <div>Day</div>
-                  <div>Subject</div>
-                  <div>Status</div>
-                  <div>Actions</div>
+              <TabsContent value="all">
+                <div className="rounded-md border">
+                  <div className="grid grid-cols-5 border-b bg-muted/50 p-2 font-medium">
+                    <div>Subject</div>
+                    <div>Date</div>
+                    <div>Time</div>
+                    <div>Status</div>
+                    <div>Method</div>
+                  </div>
+                  <div className="divide-y">
+                    {studentAttendance.map((record) => {
+                      const classInfo = mockWeekClasses.find((cls) => cls.id === record.classId);
+                      if (!classInfo) return null;
+                      
+                      return (
+                        <div key={record.id} className="grid grid-cols-5 p-2">
+                          <div>{classInfo.subject}</div>
+                          <div>{record.date}</div>
+                          <div>{`${classInfo.startTime} - ${classInfo.endTime}`}</div>
+                          <div>
+                            <span
+                              className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                                record.status === "present"
+                                  ? "bg-green-100 text-green-800"
+                                  : record.status === "absent"
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-yellow-100 text-yellow-800"
+                              }`}
+                            >
+                              {record.status}
+                            </span>
+                          </div>
+                          <div>
+                            {record.qrScanned ? "QR Scan" : "Manual"}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className="divide-y">
-                  {/* Mock date-wise data */}
-                  {Array.from({ length: 10 }).map((_, i) => {
-                    const date = new Date();
-                    date.setDate(date.getDate() - i);
-                    const subjects = ["Data Structures", "Computer Networks", "Database Systems", "Operating Systems", "Web Development"];
-                    const statuses = ["present", "absent", "late"];
-                    const randomSubject = subjects[Math.floor(Math.random() * subjects.length)];
-                    const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+              </TabsContent>
+              
+              {subjects.map((subject) => {
+                const subjectAttendance = studentAttendance.filter((record) => {
+                  const classInfo = mockWeekClasses.find((cls) => cls.id === record.classId);
+                  return classInfo && classInfo.subject === subject;
+                });
+                
+                const subjectClasses = subjectAttendance.length;
+                const subjectPresent = subjectAttendance.filter((record) => record.status === "present").length;
+                const subjectPercentage = subjectClasses > 0 
+                  ? Math.round((subjectPresent / subjectClasses) * 100) 
+                  : 0;
+                
+                return (
+                  <TabsContent key={subject} value={subject}>
+                    <div className="mb-4 grid gap-4 md:grid-cols-3">
+                      <Card>
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm font-medium">Total Classes</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-2xl font-bold">{subjectClasses}</div>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm font-medium">Present</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-2xl font-bold">{subjectPresent}</div>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm font-medium">Attendance Percentage</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-2xl font-bold">{subjectPercentage}%</div>
+                        </CardContent>
+                      </Card>
+                    </div>
                     
-                    return (
-                      <div key={i} className="grid grid-cols-5 p-4 hover:bg-muted/50">
-                        <div>{date.toLocaleDateString()}</div>
-                        <div>{['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][date.getDay()]}</div>
-                        <div>{randomSubject}</div>
-                        <div>
-                          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                            randomStatus === "present"
-                              ? "bg-green-100 text-green-800"
-                              : randomStatus === "absent"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-yellow-100 text-yellow-800"
-                          }`}>
-                            {randomStatus}
-                          </span>
-                        </div>
-                        <div>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <FileText className="h-4 w-4" />
-                            <span className="sr-only">View Details</span>
-                          </Button>
-                        </div>
+                    <div className="rounded-md border">
+                      <div className="grid grid-cols-4 border-b bg-muted/50 p-2 font-medium">
+                        <div>Date</div>
+                        <div>Time</div>
+                        <div>Status</div>
+                        <div>Method</div>
                       </div>
-                    );
-                  })}
+                      <div className="divide-y">
+                        {subjectAttendance.map((record) => {
+                          const classInfo = mockWeekClasses.find((cls) => cls.id === record.classId);
+                          if (!classInfo) return null;
+                          
+                          return (
+                            <div key={record.id} className="grid grid-cols-4 p-2">
+                              <div>{record.date}</div>
+                              <div>{`${classInfo.startTime} - ${classInfo.endTime}`}</div>
+                              <div>
+                                <span
+                                  className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                                    record.status === "present"
+                                      ? "bg-green-100 text-green-800"
+                                      : record.status === "absent"
+                                      ? "bg-red-100 text-red-800"
+                                      : "bg-yellow-100 text-yellow-800"
+                                  }`}
+                                >
+                                  {record.status}
+                                </span>
+                              </div>
+                              <div>
+                                {record.qrScanned ? "QR Scan" : "Manual"}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </TabsContent>
+                );
+              })}
+            </Tabs>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Download Reports</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-2">
+              <Button variant="outline" className="h-auto flex-col items-start gap-1 p-4">
+                <div className="flex w-full items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    <span className="font-semibold">Monthly Report</span>
+                  </div>
+                  <Download className="h-4 w-4" />
                 </div>
-              </div>
-            </TabsContent>
+                <p className="text-xs text-muted-foreground text-left">
+                  Download your complete monthly attendance report
+                </p>
+              </Button>
+              
+              <Button variant="outline" className="h-auto flex-col items-start gap-1 p-4">
+                <div className="flex w-full items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    <span className="font-semibold">Semester Report</span>
+                  </div>
+                  <Download className="h-4 w-4" />
+                </div>
+                <p className="text-xs text-muted-foreground text-left">
+                  Download your complete semester attendance report
+                </p>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
